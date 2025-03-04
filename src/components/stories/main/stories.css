@@ -1,0 +1,28 @@
+.stories {
+    display: flex;
+    align-items: center;
+    gap: 19px;
+}
+
+.stories__card {
+    cursor: pointer;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 190px;
+    height: 240px;
+}
+
+.stories__cardWrap {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.stories__cardImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
