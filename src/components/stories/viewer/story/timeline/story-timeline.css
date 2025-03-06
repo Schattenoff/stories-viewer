@@ -1,0 +1,42 @@
+.timeline {
+    margin: 10px 12px;
+    position: relative;
+    height: 3px;
+    z-index: 3;
+    display: flex;
+}
+
+.timeline--paused .timeline__item {
+    animation-play-state: paused;
+}
+
+.timeline__item {
+    border-radius: 32px;
+    margin: 0 4px 0 0;
+    background-color: rgba(255, 255, 255, .35);
+}
+
+.timeline__item:last-child {
+    margin: 0;
+}
+
+.timeline__item--past {
+    background-color: #fff;
+}
+
+.timeline__item--current {
+    background: linear-gradient(to right, #fff, #fff);
+    background-color: rgba(255, 255, 255, .35);
+    background-size: 0% 100%;
+    background-repeat: no-repeat;
+    animation: fillProgress 2s ease-in-out forwards;
+}
+
+@keyframes fillProgress {
+    from {
+        background-size: 0% 100%;
+    }
+    to {
+        background-size: 100% 100%;
+    }
+}

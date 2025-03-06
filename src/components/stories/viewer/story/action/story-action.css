@@ -1,0 +1,14 @@
+.action {
+    background: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: 600 17px/21px sans-serif;
+    padding: 12px 64px;
+    border-radius: 12px;
+    position: absolute;
+    bottom: 32px;
+    right: 32px;
+    left: 32px;
+}

@@ -5,4 +5,32 @@
     left: 0;
     bottom: 0;
     top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stories__close {
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    cursor: pointer;
+}
+
+.stories__wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.stories__arrow {
+    margin: 0 30px;
+    cursor: pointer;
+}
+
+.stories__arrow:hover {
+    text-decoration: underline;
+}
+
+.stories__arrow--disabled {
+    opacity: 0.5;
 }

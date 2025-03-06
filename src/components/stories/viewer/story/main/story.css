@@ -1,0 +1,24 @@
+.story {
+    position: relative;
+    width: 430px;
+    height: calc(100vh - 100px);
+    max-height: 766px;
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.story__nav {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: flex;
+}
+
+.story__navRight,
+.story__navLeft {
+    width: 50%;
+    height: 100%;
+}
