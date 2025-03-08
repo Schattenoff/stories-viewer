@@ -6,36 +6,56 @@
     display: flex;
 }
 
-.timeline--paused .timeline__item {
+.timeline--paused .timeline__itemFill--current {
     animation-play-state: paused;
 }
 
 .timeline__item {
+    position: relative;
     border-radius: 32px;
     margin: 0 4px 0 0;
-    background-color: rgba(255, 255, 255, .35);
+    overflow: hidden;
 }
 
 .timeline__item:last-child {
     margin: 0;
 }
 
-.timeline__item--past {
-    background-color: #fff;
+.timeline__itemBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, .35);
 }
 
-.timeline__item--current {
+.timeline__itemFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 32px;
+}
+
+.timeline__itemFill--past {
+    background: #fff;
+}
+
+.timeline__itemFill--current {
     background: linear-gradient(to right, #fff, #fff);
-    background-color: rgba(255, 255, 255, .35);
     background-size: 0% 100%;
     background-repeat: no-repeat;
-    animation: fillProgress 2s ease-in-out forwards;
+    animation: fillProgress var(--duration) ease-in-out forwards;
 }
+
 
 @keyframes fillProgress {
     from {
         background-size: 0% 100%;
     }
+
     to {
         background-size: 100% 100%;
     }

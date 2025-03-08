@@ -34,3 +34,26 @@
 .stories__arrow--disabled {
     opacity: 0.5;
 }
+
+.stories__container {
+    position: relative;
+    width: 430px;
+    height: calc(100vh - 100px);
+    max-height: 766px;
+    margin: 0 auto;
+    overflow: hidden;
+    perspective: 1000px;
+}
+
+.slide-animation {
+    backface-visibility: hidden;
+    transition: transform 0.5s
+}
+
+.slide-animation.prev {
+    transform: rotateY(90deg);
+}
+
+.slide-animation.next {
+    transform: rotateY(-90deg);
+}

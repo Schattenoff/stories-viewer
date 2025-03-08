@@ -1,4 +1,5 @@
 <script>
+import Hammer from 'hammerjs';
 import StoryFrame from "@/components/stories/viewer/story/frame/StoryFrame.vue";
 import StoryTimeline from "@/components/stories/viewer/story/timeline/StoryTimeline.vue";
 import StoryAction from "@/components/stories/viewer/story/action/StoryAction.vue";
@@ -12,7 +13,7 @@ export default {
         StoryTimeline
     },
 
-    props: ['story', 'active'],
+    props: ['story', 'active', 'storyCurrentIndex'],
 
     data() {
         return {
@@ -22,6 +23,7 @@ export default {
             duration: 1900,
             startTime: 0,
             elapsedTime: 0,
+            manager: null,
         }
     },
 
@@ -47,6 +49,8 @@ export default {
         if(this.active) {
             this.startAutoPlay();
         }
+
+        this.initHammerManager();
     },
 
     watch: {
@@ -64,6 +68,50 @@ export default {
     },
 
     methods: {
+        initHammerManager() {
+            this.manager = new Hammer.Manager(this.$refs.storyRef, {
+                recognizers: [
+                    [Hammer.Tap],
+                    [Hammer.Press],
+                    [Hammer.Swipe],
+                ]
+            });
+
+            this.manager.on('tap', (e) => {
+                if(e.target.classList[0] === 'story__navRight') {
+                    this.onNextSlide();
+                } else {
+                    this.onPrevSlide();
+                }
+            });
+
+            this.manager.on('press', () => {
+                this.pauseStory();
+            });
+
+            this.manager.on('pressup', () => {
+                this.playStory();
+            });
+
+            this.manager.on('swiperight', (e) => {
+                console.log(e);
+                this.$parent.onPrevStory();
+
+                this.stopAutoPlay();
+                this.duration = 15000;
+                this.startAutoPlay();
+            });
+
+            this.manager.on('swipeleft', () => {
+                this.$parent.onNextStory();
+
+                this.stopAutoPlay();
+                this.duration = 1900;
+                this.startAutoPlay();
+            });
+
+        },
+
         onPrevSlide() {
             if(!this.isDisabledPrev) {
                 this.$parent.onPrevStory();
@@ -88,14 +136,10 @@ export default {
             this.startAutoPlay();
         },
 
-        goToSlide() {
-            this.onNextSlide();
-        },
-
         startAutoPlay() {
             this.startTime = Date.now();
             this.timer = setTimeout(() => {
-                this.goToSlide();
+                this.onNextSlide();
             }, this.duration);
         },
 
@@ -112,19 +156,24 @@ export default {
         playStory() {
             this.duration = this.duration - this.elapsedTime;
             this.isPaused = false;
-            this.startAutoPlay(this.duration);
-        }
+            this.startAutoPlay();
+        },
     }
 }
 </script>
 
 <template>
-    <div class="story">
-        <StoryTimeline :slides="slides" :current-index="currentIndex" :is-paused="isPaused" />
-        <StoryFrame :frame-url="currentSlide.storyImg" />
+    <div class="story"
+         :class="{'story--active': active}"
+         ref="storyRef">
+        <StoryTimeline :slides="slides"
+                       :current-index="active && currentIndex"
+                       :duration="duration"
+                       :is-paused="isPaused" />
+        <StoryFrame :frame-url="currentSlide.src" />
         <div class="story__nav">
-            <div class="story__navLeft" @click="onPrevSlide()"></div>
-            <div class="story__navRight" @click="onNextSlide()"></div>
+            <div class="story__navLeft"></div>
+            <div class="story__navRight"></div>
         </div>
         <StoryAction v-for="(action, i) in currentSlide.actions"
                      :key="i"

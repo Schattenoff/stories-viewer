@@ -2,15 +2,13 @@
 export default {
     name: "StoryTimeline",
 
-    props: ['slides', 'currentIndex', 'isPaused'],
+    props: ['slides', 'currentIndex', 'duration', 'isPaused'],
 
-    data() {
-        return {
-            timer: null,
+    computed: {
+        durationStyle() {
+            return `${(this.duration + 100) / 1000}s`;
         }
-    },
-
-
+    }
 
 }
 </script>
@@ -18,16 +16,20 @@ export default {
 <template>
     <div class="timeline" :class="{'timeline--paused': isPaused}">
         <div v-for="(slide, index) in slides"
+             :key="index"
              class="timeline__item"
-             :class="{
-             'timeline__item--past': index < currentIndex,
-             'timeline__item--current': index === currentIndex,
-             'timeline__item--future': index > currentIndex
-             }"
-             :style="{width: `calc(100% / ${slides.length})`}"></div>
+             :style="{width: `calc(100% / ${slides.length})`}">
+            <div class="timeline__itemBackground"></div>
+            <div class="timeline__itemFill"
+                 :class="{
+                     'timeline__itemFill--past': index < currentIndex,
+                     'timeline__itemFill--current': index === currentIndex
+                 }"
+                 :style="{'--duration': '2s'}"></div>
+        </div>
     </div>
 </template>
 
-<style src="./story-timeline.css" scoped>
+<style src="./story-timeline.css">
 
 </style>

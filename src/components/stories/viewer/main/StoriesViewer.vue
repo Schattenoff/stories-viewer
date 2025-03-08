@@ -65,11 +65,18 @@ export default {
             <div class="stories__arrow"
                  :class="{'stories__arrow--disabled': !isDisabledPrev}"
                  @click="onPrevStory()">left</div>
-            <Story v-for="story in stories"
-                   v-show="story.id === currentStory.id"
-                   :key="story.id"
-                   :story="story"
-                   :active="story.id === currentStory.id" />
+            <div class="stories__container">
+                <Story v-for="(story, index) in stories"
+                       class="slide-animation"
+                       :class="{
+                         'prev': index < currentIndex,
+                         'next': index > currentIndex
+                       }"
+                       :key="story.id"
+                       :story="story"
+                       :story-current-index="currentIndex"
+                       :active="story.id === currentStory.id" />
+            </div>
             <div class="stories__arrow"
                  :class="{'stories__arrow--disabled': !isDisabledNext}"
                  @click="onNextStory()">right</div>
