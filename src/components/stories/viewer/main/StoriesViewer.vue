@@ -14,6 +14,7 @@ export default {
     data() {
         return {
             bgUrl: '',
+            swipeOffset: 0,
             isAnimating: false,
             currentIndex: 0,
             manager: null,
@@ -27,38 +28,36 @@ export default {
             ]
         });
 
-        this.manager.on('panleft', (e) => {
+        this.manager.on('pan', (e) => {
             this.isAnimating = true;
-            const deltaX = e.deltaX;
-            const activeSlide = this.$refs.storiesRef.querySelector('.story--active');
-            const nextSlide = activeSlide.nextElementSibling;
-            activeSlide.style.transform = `translateX(${0 + deltaX}px)`;
-            if(nextSlide) {
-                nextSlide.style.transform = `translateX(${430 + deltaX}px)`;
-            }
-        });
+            let deltaX = e.deltaX;
+            console.log('x', deltaX);
+            let newOffset = (deltaX / this.$refs.storiesRef.offsetWidth) * 100;
 
-        this.manager.on('panright', (e) => {
-            this.isAnimating = true;
-            const deltaX = e.deltaX;
-            const activeSlide = this.$refs.storiesRef.querySelector('.story--active');
-            const prevSlide = activeSlide.previousElementSibling;
-            activeSlide.style.transform = `translateX(${0 - deltaX}px)`;
-            if(prevSlide) {
-                prevSlide.style.transform = `translateX(${430 + deltaX}px)`;
+            // Ограничения для крайних слайдов
+            if (this.currentIndex === 0) {
+                newOffset = Math.min(newOffset, 0);
+            } else if (this.currentIndex === this.stories.length - 1) {
+                newOffset = Math.max(newOffset, 0);
             }
+
+            // Общие ограничения смещения
+            newOffset = Math.max(Math.min(newOffset, 100), -100);
+
+            console.log('newOffset', newOffset);
+            this.swipeOffset = newOffset;
         });
 
         this.manager.on('panend', (e) => {
-            const deltaX = e.deltaX;
-            const threshold = 100;
+            const threshold = 30;
 
-            if (deltaX < -threshold) {
+            if (this.swipeOffset < -threshold) {
                 this.onNextStory();
             } else {
                 this.onPrevStory();
             }
 
+            this.swipeOffset = 0;
             this.isAnimating = false;
         })
 
@@ -97,7 +96,6 @@ export default {
         },
 
         onPrevStory() {
-            console.log('prev story');
             if(this.isDisabledPrev) {
                 this.currentIndex = this.currentIndex - 1;
             } else {
@@ -124,9 +122,10 @@ export default {
                        class="slide-animation"
                        :class="{
                          'prev': index < currentIndex,
-                         'next': index > currentIndex
+                         'next': index > currentIndex,
+                         'no-transition': isAnimating
                        }"
-                       :style="{ transform: `translateX(${100 * (index - currentIndex)}%)` }"
+                       :style="{ transform: `translateX(${100 * (index - currentIndex) + swipeOffset}%)` }"
                        :key="story.id"
                        :story="story"
                        :is-animating="isAnimating"
