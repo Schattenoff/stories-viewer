@@ -37,3 +37,9 @@
     background: rgba(0, 0, 0, .3) url(i/close.svg) no-repeat 50% 50%;
     cursor: pointer;
 }
+
+@media(max-width: 700px) {
+    .story {
+        border-radius: 0;
+    }
+}
