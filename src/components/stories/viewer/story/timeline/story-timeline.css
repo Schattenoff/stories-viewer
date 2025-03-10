@@ -47,7 +47,7 @@
     background: linear-gradient(to right, #fff, #fff);
     background-size: 0% 100%;
     background-repeat: no-repeat;
-    animation: fillProgress var(--duration) ease-in-out forwards;
+    animation: fillProgress var(--duration) linear forwards;
 }
 
 

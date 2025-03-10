@@ -16,7 +16,7 @@ export default {
                 {
                     id: 1,
                     previewImg: 'https://i.postimg.cc/qqd0MM3r/1-2.png',
-                    images: [
+                    slides: [
                         {
                             id: 1,
                             src: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2020&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -54,7 +54,7 @@ export default {
                 {
                     id: 2,
                     previewImg: 'https://i.postimg.cc/ncpZyrxY/2.png',
-                    images: [
+                    slides: [
                         {
                             id: 3,
                             src: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1981&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -92,7 +92,7 @@ export default {
                 {
                     id: 3,
                     previewImg: 'https://i.postimg.cc/7ZL4LRf5/3.png',
-                    images: [
+                    slides: [
                         {
                             id: 2,
                             src: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -114,7 +114,7 @@ export default {
                 {
                     id: 4,
                     previewImg: 'https://i.postimg.cc/dt6vwFtM/4.png',
-                    images: [
+                    slides: [
                         {
                             id: 1,
                             src: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2020&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',

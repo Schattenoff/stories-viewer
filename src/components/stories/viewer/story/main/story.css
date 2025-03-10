@@ -4,12 +4,10 @@
     height: 100%;
     border-radius: 24px;
     overflow: hidden;
-    transition: transform 0.5s
 }
 
 .story--active {
     transform: translateX(0);
-    visibility: visible;
 }
 
 .story__nav {
@@ -26,4 +24,16 @@
 .story__navLeft {
     width: 50%;
     height: 100%;
+}
+
+.story__close {
+    z-index: 80;
+    position: absolute;
+    top: 20px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    background: rgba(0, 0, 0, .3) url(i/close.svg) no-repeat 50% 50%;
+    cursor: pointer;
 }

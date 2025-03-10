@@ -2,13 +2,13 @@
 export default {
     name: "StoryFrame",
 
-    props: ['frameUrl'],
+    props: ['frameSrc'],
 }
 </script>
 
 <template>
     <div class="frame">
-        <img class="frame__img" :src="frameUrl" />
+        <img class="frame__img" :src="frameSrc" />
     </div>
 </template>
 

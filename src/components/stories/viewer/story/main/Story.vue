@@ -13,14 +13,14 @@ export default {
         StoryTimeline
     },
 
-    props: ['story', 'active', 'storyCurrentIndex'],
+    props: ['story', 'active', 'isAnimating'],
 
     data() {
         return {
             isPaused: false,
             currentIndex: 0,
             timer: null,
-            duration: 1900,
+            duration: 15000,
             startTime: 0,
             elapsedTime: 0,
             manager: null,
@@ -29,7 +29,7 @@ export default {
 
     computed: {
         slides() {
-            return this.story.images;
+            return this.story.slides;
         },
 
         currentSlide() {
@@ -47,6 +47,7 @@ export default {
 
     mounted() {
         if(this.active) {
+            this.$emit('bg', this.slides[this.currentIndex].src);
             this.startAutoPlay();
         }
 
@@ -56,11 +57,19 @@ export default {
     watch: {
         active(newVal) {
             if (newVal) {
+                this.$emit('bg', this.slides[this.currentIndex].src);
                 this.startAutoPlay();
             } else {
                 this.stopAutoPlay();
             }
+        },
+
+        isAnimating(newVal) {
+            if (newVal && this.active) {
+                this.stopAutoPlay();
+            }
         }
+
     },
 
     beforeUnmount() {
@@ -73,11 +82,21 @@ export default {
                 recognizers: [
                     [Hammer.Tap],
                     [Hammer.Press],
-                    [Hammer.Swipe],
                 ]
             });
 
             this.manager.on('tap', (e) => {
+                // если это кнопка закрыть, то не идем дальше
+                if(e.target.classList[0].includes('close')) {
+                    return;
+                }
+
+                // нажали на какое-то действие
+                if(e.target.classList[0].includes('action')) {
+                    console.log('action');
+                    return;
+                }
+
                 if(e.target.classList[0] === 'story__navRight') {
                     this.onNextSlide();
                 } else {
@@ -93,23 +112,6 @@ export default {
                 this.playStory();
             });
 
-            this.manager.on('swiperight', (e) => {
-                console.log(e);
-                this.$parent.onPrevStory();
-
-                this.stopAutoPlay();
-                this.duration = 15000;
-                this.startAutoPlay();
-            });
-
-            this.manager.on('swipeleft', () => {
-                this.$parent.onNextStory();
-
-                this.stopAutoPlay();
-                this.duration = 1900;
-                this.startAutoPlay();
-            });
-
         },
 
         onPrevSlide() {
@@ -119,8 +121,9 @@ export default {
                 this.currentIndex = this.currentIndex - 1;
             }
 
+            this.$emit('bg', this.slides[this.currentIndex].src);
+            this.resetElapsedTime();
             this.stopAutoPlay();
-            this.duration = 1900;
             this.startAutoPlay();
         },
 
@@ -131,16 +134,21 @@ export default {
                 this.currentIndex = this.currentIndex + 1;
             }
 
+            this.$emit('bg', this.slides[this.currentIndex].src);
+            this.resetElapsedTime();
             this.stopAutoPlay();
-            this.duration = 1900;
             this.startAutoPlay();
         },
 
-        startAutoPlay() {
+        onClose() {
+            this.$emit('close');
+        },
+
+        startAutoPlay(remainingDuration) {
             this.startTime = Date.now();
             this.timer = setTimeout(() => {
                 this.onNextSlide();
-            }, this.duration);
+            }, remainingDuration ? remainingDuration : this.duration);
         },
 
         stopAutoPlay() {
@@ -150,14 +158,18 @@ export default {
         pauseStory() {
             this.isPaused = true;
             this.stopAutoPlay();
-            this.elapsedTime = Date.now() - this.startTime;
+            this.elapsedTime += Date.now() - this.startTime;
         },
 
         playStory() {
-            this.duration = this.duration - this.elapsedTime;
+            const remainingDuration = this.duration - this.elapsedTime;
             this.isPaused = false;
-            this.startAutoPlay();
+            this.startAutoPlay(remainingDuration);
         },
+
+        resetElapsedTime() {
+            this.elapsedTime = 0;
+        }
     }
 }
 </script>
@@ -166,11 +178,13 @@ export default {
     <div class="story"
          :class="{'story--active': active}"
          ref="storyRef">
+        <div class="story__close" @click="onClose()"></div>
         <StoryTimeline :slides="slides"
                        :current-index="active && currentIndex"
                        :duration="duration"
+                       :is-animating="isAnimating"
                        :is-paused="isPaused" />
-        <StoryFrame :frame-url="currentSlide.src" />
+        <StoryFrame :frame-src="currentSlide.src" />
         <div class="story__nav">
             <div class="story__navLeft"></div>
             <div class="story__navRight"></div>

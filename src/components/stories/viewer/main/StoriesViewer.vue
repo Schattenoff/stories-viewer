@@ -1,5 +1,6 @@
 <script>
 import Story from "@/components/stories/viewer/story/main/Story.vue";
+import Hammer from "hammerjs";
 
 export default {
     name: "StoriesViewer",
@@ -12,11 +13,41 @@ export default {
 
     data() {
         return {
+            bgUrl: '',
+            isAnimating: false,
             currentIndex: 0,
+            manager: null,
         }
     },
 
     mounted() {
+        this.manager = new Hammer.Manager(this.$refs.storiesRef, {
+            recognizers: [
+                [Hammer.Pan],
+            ]
+        });
+
+        this.manager.on('panleft', (e) => {
+            this.isAnimating = true;
+        });
+
+        this.manager.on('panright', (e) => {
+            this.isAnimating = true;
+        });
+
+        this.manager.on('panend', (e) => {
+            const deltaX = e.deltaX;
+            const threshold = 100;
+
+            if (deltaX < -threshold) {
+                this.onNextStory();
+            } else {
+                this.onPrevStory();
+            }
+
+            this.isAnimating = false;
+        })
+
         this.currentIndex = this.stories.findIndex(story => story.id === this.active);
     },
 
@@ -31,6 +62,10 @@ export default {
 
         isDisabledPrev() {
             return this.currentIndex > 0;
+        },
+
+        bgStyle() {
+            return `linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.9) 100%), url(${this.bgUrl})`;
         }
     },
 
@@ -48,11 +83,16 @@ export default {
         },
 
         onPrevStory() {
+            console.log('prev story');
             if(this.isDisabledPrev) {
                 this.currentIndex = this.currentIndex - 1;
             } else {
                 this.onClose();
             }
+        },
+
+        setBgUrl(url) {
+            this.bgUrl = url;
         }
     }
 }
@@ -60,26 +100,29 @@ export default {
 
 <template>
     <div class="stories__viewer">
-        <div class="stories__close" @click="onClose">close</div>
+        <div class="stories__viewerBg" :style="{'background-image': bgStyle}"></div>
         <div class="stories__wrapper">
-            <div class="stories__arrow"
+            <div class="stories__arrow stories__arrow--left"
                  :class="{'stories__arrow--disabled': !isDisabledPrev}"
-                 @click="onPrevStory()">left</div>
-            <div class="stories__container">
+                 @click="isDisabledPrev && onPrevStory()"></div>
+            <div class="stories__container" ref="storiesRef">
                 <Story v-for="(story, index) in stories"
                        class="slide-animation"
                        :class="{
                          'prev': index < currentIndex,
                          'next': index > currentIndex
                        }"
+                       :style="{ transform: `translateX(${100 * (index - currentIndex)}%)` }"
                        :key="story.id"
                        :story="story"
-                       :story-current-index="currentIndex"
-                       :active="story.id === currentStory.id" />
+                       :is-animating="isAnimating"
+                       :active="story.id === currentStory.id"
+                       @close="onClose"
+                       @bg="setBgUrl" />
             </div>
-            <div class="stories__arrow"
+            <div class="stories__arrow stories__arrow--right"
                  :class="{'stories__arrow--disabled': !isDisabledNext}"
-                 @click="onNextStory()">right</div>
+                 @click="isDisabledNext && onNextStory()"></div>
         </div>
     </div>
 </template>
