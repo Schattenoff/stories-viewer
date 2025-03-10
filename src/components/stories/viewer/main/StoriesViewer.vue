@@ -29,10 +29,24 @@ export default {
 
         this.manager.on('panleft', (e) => {
             this.isAnimating = true;
+            const deltaX = e.deltaX;
+            const activeSlide = this.$refs.storiesRef.querySelector('.story--active');
+            const nextSlide = activeSlide.nextElementSibling;
+            activeSlide.style.transform = `translateX(${0 + deltaX}px)`;
+            if(nextSlide) {
+                nextSlide.style.transform = `translateX(${430 + deltaX}px)`;
+            }
         });
 
         this.manager.on('panright', (e) => {
             this.isAnimating = true;
+            const deltaX = e.deltaX;
+            const activeSlide = this.$refs.storiesRef.querySelector('.story--active');
+            const prevSlide = activeSlide.previousElementSibling;
+            activeSlide.style.transform = `translateX(${0 - deltaX}px)`;
+            if(prevSlide) {
+                prevSlide.style.transform = `translateX(${430 + deltaX}px)`;
+            }
         });
 
         this.manager.on('panend', (e) => {
