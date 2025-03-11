@@ -139,7 +139,6 @@ export default {
                        :style="{
                         transform: `
                           translateX(${100 * (index - currentIndex) + swipeOffset}%)
-                          ${panY ? `translateY(${panY}%)` : ''}
                         `}"
                        :key="story.id"
                        :story="story"
