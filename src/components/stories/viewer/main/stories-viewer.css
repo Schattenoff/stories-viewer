@@ -73,7 +73,7 @@
 
 .slide-animation {
     backface-visibility: hidden;
-    transition: transform .2s ease-in-out;
+    transition: transform .3s ease-in-out;
 }
 
 .slide-animation.prev {

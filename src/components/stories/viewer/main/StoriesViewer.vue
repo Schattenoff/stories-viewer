@@ -15,6 +15,7 @@ export default {
         return {
             bgUrl: '',
             swipeOffset: 0,
+            panY: 0,
             isPanning: false,
             currentIndex: 0,
             manager: null,
@@ -30,7 +31,16 @@ export default {
 
         this.manager.on('pan', (e) => {
             this.isPanning = true;
-            let deltaX = e.deltaX;
+
+            const deltaX = e.deltaX;
+            const deltaY = e.deltaY;
+
+            if(deltaY >= 5 && (deltaX < 5 && deltaX > -5)) {
+                this.panY = Math.min(deltaY / 5, 100); // Плавное смещение вниз
+                console.log(this.panY);
+                return;
+            }
+
             let newOffset = (deltaX / this.$refs.storiesRef.offsetWidth) * 100;
 
             if (this.currentIndex === 0) {
@@ -47,12 +57,17 @@ export default {
         this.manager.on('panend', (e) => {
             const threshold = 5;
 
-            if (this.swipeOffset <= -threshold) {
+            if(this.panY >= 30) {
+                this.onClose();
+            }
+
+            if (this.swipeOffset < -threshold) {
                 this.onNextStory();
-            } else if (this.swipeOffset >= threshold) {
+            } else if (this.swipeOffset > threshold) {
                 this.onPrevStory();
             }
 
+            this.panY = 0;
             this.swipeOffset = 0;
             this.isPanning = false;
         })
@@ -121,7 +136,11 @@ export default {
                          'next': index > currentIndex,
                          'no-transition': isPanning
                        }"
-                       :style="{ transform: `translateX(${100 * (index - currentIndex) + swipeOffset}%)` }"
+                       :style="{
+                        transform: `
+                          translateX(${100 * (index - currentIndex) + swipeOffset}%)
+                          ${panY ? `translateY(${panY}%)` : ''}
+                        `}"
                        :key="story.id"
                        :story="story"
                        :is-panning="isPanning"
