@@ -13,7 +13,7 @@ export default {
         StoryTimeline
     },
 
-    props: ['story', 'active', 'isAnimating'],
+    props: ['story', 'active', 'isPanning'],
 
     data() {
         return {
@@ -182,7 +182,7 @@ export default {
         <StoryTimeline :slides="slides"
                        :current-index="active && currentIndex"
                        :duration="duration"
-                       :is-animating="isAnimating"
+                       :is-panning="isPanning"
                        :is-paused="isPaused" />
         <StoryFrame :frame-src="currentSlide.src" />
         <div class="story__nav">

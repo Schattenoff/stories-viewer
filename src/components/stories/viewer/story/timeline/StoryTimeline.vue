@@ -2,11 +2,11 @@
 export default {
     name: "StoryTimeline",
 
-    props: ['slides', 'currentIndex', 'duration', 'isPaused', 'isAnimating'],
+    props: ['slides', 'currentIndex', 'duration', 'isPaused', 'isPanning'],
 
     computed: {
         paused() {
-            return this.isPaused || this.isAnimating;
+            return this.isPaused || this.isPanning;
         },
 
         durationStyle() {

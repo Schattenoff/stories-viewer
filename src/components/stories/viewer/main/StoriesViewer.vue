@@ -15,7 +15,7 @@ export default {
         return {
             bgUrl: '',
             swipeOffset: 0,
-            isAnimating: false,
+            isPanning: false,
             currentIndex: 0,
             manager: null,
         }
@@ -29,36 +29,32 @@ export default {
         });
 
         this.manager.on('pan', (e) => {
-            this.isAnimating = true;
+            this.isPanning = true;
             let deltaX = e.deltaX;
-            console.log('x', deltaX);
             let newOffset = (deltaX / this.$refs.storiesRef.offsetWidth) * 100;
 
-            // Ограничения для крайних слайдов
             if (this.currentIndex === 0) {
-                newOffset = Math.min(newOffset, 0);
+                newOffset = Math.min(newOffset, 5);
             } else if (this.currentIndex === this.stories.length - 1) {
-                newOffset = Math.max(newOffset, 0);
+                newOffset = Math.max(newOffset, -5);
             }
 
-            // Общие ограничения смещения
             newOffset = Math.max(Math.min(newOffset, 100), -100);
 
-            console.log('newOffset', newOffset);
             this.swipeOffset = newOffset;
         });
 
         this.manager.on('panend', (e) => {
-            const threshold = 30;
+            const threshold = 5;
 
-            if (this.swipeOffset < -threshold) {
+            if (this.swipeOffset <= -threshold) {
                 this.onNextStory();
-            } else {
+            } else if (this.swipeOffset >= threshold) {
                 this.onPrevStory();
             }
 
             this.swipeOffset = 0;
-            this.isAnimating = false;
+            this.isPanning = false;
         })
 
         this.currentIndex = this.stories.findIndex(story => story.id === this.active);
@@ -123,12 +119,12 @@ export default {
                        :class="{
                          'prev': index < currentIndex,
                          'next': index > currentIndex,
-                         'no-transition': isAnimating
+                         'no-transition': isPanning
                        }"
                        :style="{ transform: `translateX(${100 * (index - currentIndex) + swipeOffset}%)` }"
                        :key="story.id"
                        :story="story"
-                       :is-animating="isAnimating"
+                       :is-panning="isPanning"
                        :active="story.id === currentStory.id"
                        @close="onClose"
                        @bg="setBgUrl" />
