@@ -83,7 +83,7 @@ export default {
 
                 if(!this.swipeHorizontalChecked) {
                     if (deltaY > 0) {
-                        this.swipeOffsetY = Math.min(deltaY / 10, 100);
+                        this.swipeOffsetY = Math.min(deltaY / 8, 100);
                     }
                     return;
                 }
@@ -120,7 +120,7 @@ export default {
         this.manager.on('panend', (e) => {
             const threshold = 10;
 
-            if(this.swipeOffsetY >= 30) {
+            if(this.swipeOffsetY >= 25) {
                 this.onClose();
             }
 
