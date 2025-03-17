@@ -58,6 +58,12 @@ export default {
         active(newVal) {
             if (newVal) {
                 this.$emit('bg', this.slides[this.currentIndex].src);
+
+                if(this.isPaused) {
+                    this.resetElapsedTime();
+                    this.isPaused = false;
+                }
+
                 this.startAutoPlay();
             } else {
                 this.stopAutoPlay();
