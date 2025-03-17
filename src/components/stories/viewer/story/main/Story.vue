@@ -64,7 +64,7 @@ export default {
             }
         },
 
-        isAnimating(newVal) {
+        isPanning(newVal) {
             if (newVal && this.active) {
                 this.stopAutoPlay();
             }
