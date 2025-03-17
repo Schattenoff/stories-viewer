@@ -83,7 +83,7 @@ export default {
 
                 if(!this.swipeHorizontalChecked) {
                     if (deltaY > 0) {
-                        this.swipeOffsetY = Math.min(deltaY / 5, 100);
+                        this.swipeOffsetY = Math.min(deltaY / 10, 100);
                     }
                     return;
                 }
@@ -91,15 +91,22 @@ export default {
                 let newOffset = (deltaX / this.$refs.storiesRef.offsetWidth) * 100;
 
                 if (this.stories.length === 1) {
-                    // Если только одна сторис, ограничиваем смещение в обе стороны
-                    newOffset = Math.max(Math.min(newOffset, 5), -5);
+                    return;
                 } else {
                     if (this.currentIndex === 0) {
-                        // Если первая сторис, ограничиваем смещение вправо
-                        newOffset = Math.min(newOffset, 5);
+                        if(newOffset > 0) {
+                            newOffset = Math.max(newOffset, -5);
+                            newOffset *= 0.1;
+                        } else {
+                            newOffset = Math.min(newOffset, 5);
+                        }
                     } else if (this.currentIndex === this.stories.length - 1) {
-                        // Если последняя сторис, ограничиваем смещение влево
-                        newOffset = Math.max(newOffset, -5);
+                        if(newOffset < 0) {
+                            newOffset = Math.min(newOffset, -5);
+                            newOffset *= 0.1;
+                        } else {
+                            newOffset = Math.max(newOffset, 5);
+                        }
                     }
                 }
 
@@ -111,7 +118,7 @@ export default {
         });
 
         this.manager.on('panend', (e) => {
-            const threshold = 5;
+            const threshold = 10;
 
             if(this.swipeOffsetY >= 30) {
                 this.onClose();
@@ -177,7 +184,7 @@ export default {
                        :style="{
                         transform: `
                           translateX(${100 * (index - currentIndex) + swipeOffsetX}%)
-                          translateZ(${index === currentIndex ? 0 : -95 + Math.abs(swipeOffsetX)}px)
+                          translateZ(${index === currentIndex ? 0 : -90 + Math.abs(swipeOffsetX)}px)
                           translateY(${swipeOffsetY}%)
                         `}"
                        :key="story.id"

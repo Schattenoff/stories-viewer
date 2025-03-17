@@ -20,7 +20,7 @@ export default {
             isPaused: false,
             currentIndex: 0,
             timer: null,
-            duration: 15000,
+            duration: 10000,
             startTime: 0,
             elapsedTime: 0,
             manager: null,
