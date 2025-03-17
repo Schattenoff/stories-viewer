@@ -113,7 +113,7 @@ export default {
         this.manager.on('panend', (e) => {
             const threshold = 5;
 
-            if(this.panY >= 30) {
+            if(this.swipeOffsetY >= 30) {
                 this.onClose();
             }
 
@@ -177,7 +177,7 @@ export default {
                        :style="{
                         transform: `
                           translateX(${100 * (index - currentIndex) + swipeOffsetX}%)
-                          translateZ(${index === currentIndex ? 0 : -215}px)
+                          translateZ(${index === currentIndex ? 0 : -95 + Math.abs(swipeOffsetX)}px)
                           translateY(${swipeOffsetY}%)
                         `}"
                        :key="story.id"
