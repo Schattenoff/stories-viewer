@@ -70,6 +70,10 @@
     /*transition: transform 300ms;*/
 }
 
+.slide-animation {
+    backface-visibility: hidden;
+}
+
 .slide-animation.current {
     transform: translateZ(207px);
     z-index: 2;
