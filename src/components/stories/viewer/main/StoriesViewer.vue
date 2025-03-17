@@ -16,12 +16,10 @@ export default {
             bgUrl: '',
             swipeMoveAdjusted: false,
             swipeHorizontalChecked: false,
-            rotateY: 0,
             swipeOffsetX: 0,
             swipeOffsetY: 0,
+            swipeOffsetZ: 0,
             isPanning: false,
-            isAnimating: false,
-            isTransitionEnabled: false,
             currentIndex: 0,
             manager: null,
         }
@@ -90,62 +88,43 @@ export default {
                     return;
                 }
 
-                // let newOffset = (deltaX / this.$refs.storiesRef.offsetWidth) * 100;
-                //
-                // if (this.stories.length === 1) {
-                //     // Если только одна сторис, ограничиваем смещение в обе стороны
-                //     newOffset = Math.max(Math.min(newOffset, 5), -5);
-                // } else {
-                //     if (this.currentIndex === 0) {
-                //         // Если первая сторис, ограничиваем смещение вправо
-                //         newOffset = Math.min(newOffset, 5);
-                //     } else if (this.currentIndex === this.stories.length - 1) {
-                //         // Если последняя сторис, ограничиваем смещение влево
-                //         newOffset = Math.max(newOffset, -5);
-                //     }
-                // }
-                //
-                // // Общее ограничение на случай выхода за пределы
-                // newOffset = Math.max(Math.min(newOffset, 100), -100);
-                //
-                // this.swipeOffsetX = newOffset;
-
-                let newRotateY = (deltaX / this.$refs.storiesRef.offsetWidth) * 90; // Максимальный угол 30 градусов
+                let newOffset = (deltaX / this.$refs.storiesRef.offsetWidth) * 100;
 
                 if (this.stories.length === 1) {
-                    // Если только одна сторис, ограничиваем вращение в обе стороны
-                    newRotateY = Math.max(Math.min(newRotateY, 15), -15); // Ограничение до 15 градусов
+                    // Если только одна сторис, ограничиваем смещение в обе стороны
+                    newOffset = Math.max(Math.min(newOffset, 5), -5);
                 } else {
                     if (this.currentIndex === 0) {
-                        // Если первая сторис, ограничиваем вращение вправо
-                        newRotateY = Math.min(newRotateY, 15);
+                        // Если первая сторис, ограничиваем смещение вправо
+                        newOffset = Math.min(newOffset, 5);
                     } else if (this.currentIndex === this.stories.length - 1) {
-                        // Если последняя сторис, ограничиваем вращение влево
-                        newRotateY = Math.max(newRotateY, -15);
+                        // Если последняя сторис, ограничиваем смещение влево
+                        newOffset = Math.max(newOffset, -5);
                     }
                 }
 
                 // Общее ограничение на случай выхода за пределы
-                newRotateY = Math.max(Math.min(newRotateY, 90), -90);
+                newOffset = Math.max(Math.min(newOffset, 100), -100);
 
-                this.rotateY = newRotateY;
+                this.swipeOffsetX = newOffset;
             }
         });
 
         this.manager.on('panend', (e) => {
-            const threshold = 15;
+            const threshold = 5;
 
             if(this.panY >= 30) {
                 this.onClose();
             }
 
-            if (this.rotateY < -threshold) {
+            if (this.swipeOffsetX < -threshold) {
                 this.onNextStory();
-            } else if (this.rotateY > threshold) {
+            } else if (this.swipeOffsetX > threshold) {
                 this.onPrevStory();
             }
 
             this.swipeOffsetY = 0;
+            this.swipeOffsetX = 0;
             this.isPanning = false;
         })
 
@@ -158,39 +137,16 @@ export default {
         },
 
         onNextStory() {
-            if(this.isAnimating) return;
-
             if(this.isDisabledNext) {
-                this.isAnimating = true;
-
-                this.rotateY = -90;
-
-                setTimeout(() => {
-                    this.rotateY = 0;
-                    this.currentIndex = this.currentIndex + 1;
-                    this.isAnimating = false;
-                }, 300);
-
-
+                this.currentIndex = this.currentIndex + 1;
             } else {
                 this.onClose();
             }
         },
 
         onPrevStory() {
-            if(this.isAnimating) return;
-
             if(this.isDisabledPrev) {
-                this.isAnimating = true;
-
-                this.rotateY = 90;
-
-                setTimeout(() => {
-                    this.rotateY = 0;
-                    this.currentIndex = this.currentIndex - 1;
-                    this.isAnimating = false;
-                }, 300);
-
+                this.currentIndex = this.currentIndex - 1;
             } else {
                 this.onClose();
             }
@@ -210,22 +166,20 @@ export default {
             <div class="stories__arrow stories__arrow--left"
                  :class="{'stories__arrow--disabled': !isDisabledPrev}"
                  @click="isDisabledPrev && onPrevStory()"></div>
-            <div class="stories__container"
-                 ref="storiesRef"
-                 :class="{'no-transition': isPanning}"
-                 :style="{
-                   transform: `
-                     rotateY(${rotateY}deg)
-                   `,
-                 }">
+            <div class="stories__container" ref="storiesRef">
                 <Story v-for="(story, index) in stories"
                        class="slide-animation"
                        :class="{
-                         'current': index === currentIndex,
-                         'prev': index === currentIndex - 1,
-                         'next': index === currentIndex + 1,
+                         'prev': index < currentIndex,
+                         'next': index > currentIndex,
                          'no-transition': isPanning
                        }"
+                       :style="{
+                        transform: `
+                          translateX(${100 * (index - currentIndex) + swipeOffsetX}%)
+                          translateZ(${index === currentIndex ? 0 : -215}px)
+                          translateY(${swipeOffsetY}%)
+                        `}"
                        :key="story.id"
                        :story="story"
                        :is-panning="isPanning"
