@@ -203,7 +203,7 @@ export default {
             <div class="stories__arrow stories__arrow--left"
                  :class="{'stories__arrow--disabled': !isDisabledPrev}"
                  @click="isDisabledPrev && onPrevStory()"></div>
-            <div class="stories__container" ref="storiesRef">
+            <div class="stories__container" :class="{'stories__container--hideSlides': swipeOffsetY >= 25}" ref="storiesRef">
                 <Story v-for="(story, index) in stories"
                        class="slide-animation"
                        :class="{

@@ -99,4 +99,9 @@
         height: 100svh;
         max-height: unset;
     }
+
+    .stories__container--hideSlides .slide-animation.next,
+    .stories__container--hideSlides .slide-animation.prev {
+        display: none;
+    }
 }
