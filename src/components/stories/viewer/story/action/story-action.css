@@ -1,5 +1,5 @@
 .action {
-    background: #000;
+    background: rgba(0,0,0, 0.5);
     color: #fff;
     display: flex;
     align-items: center;
@@ -13,4 +13,5 @@
     left: 32px;
     z-index: 3;
     cursor: pointer;
+    backdrop-filter: blur(10px);
 }

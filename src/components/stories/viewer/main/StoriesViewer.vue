@@ -39,10 +39,25 @@ export default {
         },
 
         bgStyle() {
+            if (this.isMobile) {
+                const maxOffset = 70;
+                const opacity = 1 - (this.swipeOffsetY / maxOffset);
+
+                return {
+                    'background': 'rgba(255, 255, 255, 0.5)',
+                    'backdrop-filter': 'blur(10px)',
+                    'opacity': opacity,
+                };
+            }
+
             return {
                 'background-image': `linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.9) 100%), url(${this.bgUrl})`
             };
         },
+
+        isMobile() {
+            return window.innerWidth <= 700;
+        }
 
     },
 
@@ -121,7 +136,22 @@ export default {
             const threshold = 10;
 
             if(this.swipeOffsetY >= 25) {
-                this.onClose();
+                const targetValue = 100;
+                const speed = 10; // Скорость изменения (чем больше, тем плавнее)
+
+                const animate = () => {
+                    this.swipeOffsetY += (targetValue - this.swipeOffsetY) / speed;
+
+                    if (Math.abs(this.swipeOffsetY - targetValue) > 0.1) {
+                        requestAnimationFrame(animate); // Продолжаем анимацию
+                    } else {
+                        this.swipeOffsetY = targetValue;
+                        this.onClose();
+                    }
+                };
+
+                animate(); // Запускаем анимацию
+                return;
             }
 
             if (this.swipeOffsetX < -threshold) {
